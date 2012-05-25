@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>sofit</groupId>
+  <artifactId>sms_worker</artifactId>
+  <version>1.0</version>
+  <packaging>apk</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>android</artifactId>
+      <version>${android.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+      </plugin>
+      <plugin>
+        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+        <artifactId>android-maven-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <resourceDirectory>${project.basedir}/src/main/resources</resourceDirectory>
+          <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
+          <!--<assetsDirectory>${project.basedir}/assets</assetsDirectory>-->
+          <!--<nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>-->
+          <!--<sdk>-->
+            <!--<platform>10</platform>-->
+          <!--</sdk>-->
+          <undeployBeforeDeploy>true</undeployBeforeDeploy>
+        </configuration>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <android.version>4.0.3</android.version>
+  </properties>
+</project>

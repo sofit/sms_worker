@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Отложенная отправка SMS</string>
+  <string name="get_sms_list">Получить список SMS</string>
+  <string name="sms_list">Список SMS:</string>
+  <string name="add_sms">Добавить SMS</string>
+  <string name="sms_body">Сообщение</string>
+  <string name="sms_date">Дата</string>
+</resources>
