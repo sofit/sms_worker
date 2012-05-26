@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
-  <Button
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:text="@string/add_sms"
-      android:onClick="showSmsForm"/>
-  <TextView
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:text="@string/sms_list"/>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+  <ScrollView
+      android:orientation="vertical"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+      <TextView
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:text="@string/sms_person"/>
+      <MultiAutoCompleteTextView
+          android:id="@+id/address"
+          android:inputType="textPersonName"
+          android:layout_height="wrap_content"
+          android:layout_width="fill_parent"
+          android:completionThreshold="1"/>
+      <TextView
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:text="@string/sms_body"/>
+      <EditText
+          android:id="@+id/body"
+          android:layout_height="wrap_content"
+          android:layout_width="fill_parent"
+          android:inputType="textLongMessage|textMultiLine|textAutoCorrect|textAutoComplete"
+          android:minLines="5"/>
+      <Button
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:text="@string/send_sms"
+          android:onClick="sendSms"/>
+      <TextView
+          android:layout_height="wrap_content"
+          android:layout_width="wrap_content"
+          android:text="@string/sms_list"/>
+    </LinearLayout>
+  </ScrollView>
   <ListView
       android:id="@+id/listView"
       android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="fill_parent"
       android:columnWidth="90dp"
       android:numColumns="auto_fit"
       android:verticalSpacing="10dp"
@@ -23,27 +54,4 @@
       android:stretchMode="columnWidth"
       android:gravity="center"/>
   />
-  <LinearLayout
-      android:id="@+id/editView"
-      android:orientation="vertical"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:visibility="visible">
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/sms_date"/>
-    <EditText
-        android:id="@+id/date"
-        android:layout_height="wrap_content"
-        android:layout_width="140sp"/>
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/sms_body"/>
-    <EditText
-        android:id="@+id/body"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"/>
-  </LinearLayout>
 </LinearLayout>

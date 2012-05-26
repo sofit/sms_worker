@@ -1,61 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_height="wrap_content" android:layout_width="wrap_content"
-             android:orientation="horizontal" android:weightSum="1.0">
-  <TableRow android:layout_margin="2dip">
-    <!--<TextView-->
-    <!--android:id="@+id/id_entry"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="111"/>-->
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="|"/>-->
-    <!--<TextView-->
-    <!--android:id="@+id/thread_id_entry"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="222"/>-->
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="|"/>-->
-    <!--<TextView-->
-    <!--android:id="@+id/address_entry"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="333"/>-->
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="|"/>-->
-    <!--<TextView-->
-    <!--android:id="@+id/person_entry"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="444"/>-->
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="|"/>-->
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent" android:layout_width="wrap_content"
+    android:orientation="vertical" android:weightSum="1.0">
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="|"/>
+        android:text="@string/sms_date"/>
     <TextView
         android:id="@+id/date_entry"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="555"/>
+        android:layout_height="wrap_content"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="|"/>
+        android:text="@string/sms_sender"/>
+    <!--<TextView-->
+    <!--android:id="@+id/person_entry"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"/>-->
     <TextView
-        android:id="@+id/body_entry"
+        android:id="@+id/address_entry"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="666"/>
-  </TableRow>
+        android:layout_height="wrap_content"/>
+  </LinearLayout>
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/sms_body"/>
+  <TextView
+      android:id="@+id/body_entry"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
 </TableLayout>
