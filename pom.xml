@@ -16,6 +16,11 @@
       <version>${platform.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>support-v4</artifactId>
+      <version>r7</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -28,7 +33,7 @@
       <plugin>
         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
         <artifactId>android-maven-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.3.2</version>
         <configuration>
           <resourceDirectory>${project.basedir}/src/main/resources</resourceDirectory>
           <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>

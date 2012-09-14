@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Отложенная отправка SMS</string>
-  <string name="sms_person">Получатели</string>
-  <string name="sms_body">Сообщение</string>
-  <string name="send_sms">Отправить SMS</string>
   <string name="sms_list">Список SMS:</string>
-  <string name="sms_date">Дата: </string>
-  <string name="sms_sender">, от: </string>
+  <string name="recipient_hint">Кому</string>
+  <string name="body_hint">Сообщение</string>
+  <string name="date_hint">Дата</string>
+  <string name="time_hint">Время</string>
+  <string name="entry_body">Body: </string>
+  <string name="entry_sender">Sender: </string>
+  <string name="entry_date">Date: </string>
+  <string name="send_date">Отправить в </string>
+  <string name="entry_number">Номер</string>
+  <string name="queue_sms">Добавить в очередь</string>
 </resources>
