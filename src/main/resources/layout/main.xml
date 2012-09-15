@@ -59,7 +59,8 @@
         android:textOn="On"
         android:textOff="Off"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:onClick="onToggleClicked"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,6 +71,11 @@
         android:layout_height="wrap_content"
         android:text="Queue"
         android:onClick="showQueueList"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear queue"
+        android:onClick="clearQueue"/>
   </LinearLayout>
   <TextView
       android:layout_height="wrap_content"

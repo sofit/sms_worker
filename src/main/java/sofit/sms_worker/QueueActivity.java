@@ -11,15 +11,16 @@ import android.widget.SimpleCursorAdapter;
  */
 public class QueueActivity extends Activity {
 
-  private final DatabaseHelper databaseHelper = ((MainApplication) getApplication()).getDbHelper();
+  private DatabaseHelper dbHelper;
   private Cursor cursor;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.inbox);
+    dbHelper = ((MainApplication) getApplication()).getDbHelper();
 
-    cursor = databaseHelper.getAllQueueElements();
+    cursor = dbHelper.getQueueElementCursor();
 
     // the desired columns to be bound
     String[] columns = new String[] {DatabaseHelper.SEND_DATETIME, DatabaseHelper.RECIPIENT, DatabaseHelper.BODY};

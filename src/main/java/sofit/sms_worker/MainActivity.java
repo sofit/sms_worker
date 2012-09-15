@@ -2,6 +2,7 @@ package sofit.sms_worker;
 
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -22,14 +23,16 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
 
   private static final String TAG = "MainActivity";
 
-  private final DatabaseHelper databaseHelper = ((MainApplication) getApplication()).getDbHelper();
+  private DatabaseHelper dbHelper;
+  private Cursor peopleCursor;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
+    dbHelper = ((MainApplication) getApplication()).getDbHelper();
 
-    Cursor peopleCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PEOPLE_PROJECTION, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+    peopleCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PEOPLE_PROJECTION, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
     ContactListAdapter contactAdapter = new ContactListAdapter(this, peopleCursor);
     MultiAutoCompleteTextView addressView = (MultiAutoCompleteTextView) findViewById(R.id.address);
     addressView.setAdapter(contactAdapter);
@@ -41,6 +44,16 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
     String time = String.format("%1$tH:%1$tM", calendar);
     ((TextView) findViewById(R.id.date)).setText(date);
     ((TextView) findViewById(R.id.time)).setText(time);
+
+    Intent intent = new Intent(this, QueueService.class);
+    startService(intent);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    peopleCursor.close();
   }
 
   public void queueSms(View view) throws ParseException {
@@ -54,20 +67,7 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
     String sendDate = dateView.getText().toString() + " " + timeView.getText().toString();
 
     QueueElement queueElement = new QueueElement(address, body, sendDate);
-    databaseHelper.addQueueElement(queueElement);
-    /*
-    Timer timer = new Timer();
-    timer.schedule(new TimerTask() {
-
-      @Override
-      public void run() {
-        //TODO: implement this method
-      }
-    }, sendDate);
-    SmsManager smsManager = SmsManager.getDefault();
-    smsManager.sendTextMessage(addressView.getText().toString(), null, bodyView.getText().toString(), null, null);
-    addressView.setText("");
-    bodyView.setText("");*/
+    dbHelper.addQueueElement(queueElement);
   }
 
   public static class ContactListAdapter extends CursorAdapter implements Filterable {
@@ -214,5 +214,24 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
   public void showQueueList(View view) {
     Intent intent = new Intent(this, QueueActivity.class);
     startActivity(intent);
+  }
+
+  public void onToggleClicked(View view) {
+    boolean on = ((ToggleButton) view).isChecked();
+
+    if (on) {
+      Intent intent = new Intent(this, QueueService.class);
+      startService(intent);
+    }
+    else {
+      Intent intent = new Intent(this, QueueService.class);
+      stopService(intent);
+    }
+  }
+
+  public void clearQueue(View view) {
+    List<QueueElement> queueElementList = dbHelper.getAllQueueElements();
+    for (QueueElement queueElement : queueElementList)
+      dbHelper.delete(queueElement);
   }
 }

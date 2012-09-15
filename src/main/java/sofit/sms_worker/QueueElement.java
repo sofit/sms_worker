@@ -10,6 +10,9 @@ public class QueueElement {
   private String body;
   private String sendDatetime;
 
+  public QueueElement() {
+  }
+
   public QueueElement(Long id, String recipient, String body, String sendDatetime) {
     this.id = id;
     this.recipient = recipient;

@@ -1,5 +1,8 @@
 package sofit.sms_worker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -41,47 +44,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   }
 
   public void addQueueElement(QueueElement queueElement) {
-    SQLiteDatabase db = null;
-
-    try {
-      db = getWritableDatabase();
-      ContentValues contentValues = new ContentValues();
-      contentValues.put(BODY, queueElement.getBody());
-      contentValues.put(RECIPIENT, queueElement.getRecipient());
-      contentValues.put(SEND_DATETIME, queueElement.getSendDatetime());
-      queueElement.setId(db.insert(TABLE_NAME, null, contentValues));
-    }
-    finally {
-      if (db != null)
-        db.close();
-    }
+    SQLiteDatabase db = getWritableDatabase();
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(BODY, queueElement.getBody());
+    contentValues.put(RECIPIENT, queueElement.getRecipient());
+    contentValues.put(SEND_DATETIME, queueElement.getSendDatetime());
+    queueElement.setId(db.insert(TABLE_NAME, null, contentValues));
   }
 
-  public Cursor getAllQueueElements() {
-    SQLiteDatabase db = null;
+  public Cursor getQueueElementCursor() {
+    SQLiteDatabase db = getReadableDatabase();
 
-    try {
-      db = getReadableDatabase();
+    return db.query(TABLE_NAME, new String[] {_ID, SEND_DATETIME, RECIPIENT, BODY},
+        null, null, null, null, DatabaseHelper.SEND_DATETIME);
+  }
 
-      return db.query(TABLE_NAME, new String[] {_ID, SEND_DATETIME, RECIPIENT, BODY},
-          null, null, null, null, DatabaseHelper.SEND_DATETIME);
+  public List<QueueElement> getQueueElements(String selection, String[] selectionArgs) {
+    SQLiteDatabase db = getReadableDatabase();
+
+    List<QueueElement> queueElementList = new ArrayList<QueueElement>();
+
+    Cursor cursor = db.query(TABLE_NAME, new String[] {_ID, SEND_DATETIME, RECIPIENT, BODY},
+        selection, selectionArgs, null, null, DatabaseHelper.SEND_DATETIME);
+
+    // looping through all rows and adding to list
+    if (cursor.moveToFirst()) {
+      do {
+        QueueElement queueElement = new QueueElement();
+        queueElement.setId(cursor.getLong(0));
+        queueElement.setSendDatetime(cursor.getString(1));
+        queueElement.setRecipient(cursor.getString(2));
+        queueElement.setBody(cursor.getString(3));
+        // Adding contact to list
+        queueElementList.add(queueElement);
+      }
+      while (cursor.moveToNext());
     }
-    finally {
-      if (db != null)
-        db.close();
-    }
+
+    // return contact list
+    return queueElementList;
+  }
+
+  public List<QueueElement> getAllQueueElements() {
+    return getQueueElements(null, null);
   }
 
   public void delete(QueueElement queueElement) {
-    SQLiteDatabase db = null;
-
-    try {
-      db = getWritableDatabase();
-      db.delete(TABLE_NAME, _ID + " = ?", new String[] {String.valueOf(queueElement.getId())});
-    }
-    finally {
-      if (db != null)
-        db.close();
-    }
+    SQLiteDatabase db = getWritableDatabase();
+    db.delete(TABLE_NAME, _ID + " = ?", new String[] {String.valueOf(queueElement.getId())});
   }
 }
