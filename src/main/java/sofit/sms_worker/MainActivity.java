@@ -6,11 +6,9 @@ import java.util.Calendar;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
@@ -23,7 +21,8 @@ import android.widget.*;
 public class MainActivity extends FragmentActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
   private static final String TAG = "MainActivity";
-  private final SmsWorkerOpenHelper smsWorkerOpenHelper = new SmsWorkerOpenHelper(this);
+
+  private final DatabaseHelper databaseHelper = ((MainApplication) getApplication()).getDbHelper();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +53,8 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
     String body = bodyView.getText().toString();
     String sendDate = dateView.getText().toString() + " " + timeView.getText().toString();
 
-    SQLiteDatabase sqLiteDatabase = smsWorkerOpenHelper.getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(SmsWorkerOpenHelper.BODY, body);
-    contentValues.put(SmsWorkerOpenHelper.RECIPIENT, address);
-    contentValues.put(SmsWorkerOpenHelper.SEND_DATE, sendDate);
-    sqLiteDatabase.insert(SmsWorkerOpenHelper.TABLE_NAME, null, contentValues);
+    QueueElement queueElement = new QueueElement(address, body, sendDate);
+    databaseHelper.addQueueElement(queueElement);
     /*
     Timer timer = new Timer();
     timer.schedule(new TimerTask() {

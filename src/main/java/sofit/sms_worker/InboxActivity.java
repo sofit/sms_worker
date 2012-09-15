@@ -14,12 +14,14 @@ public class InboxActivity extends Activity {
 
   public static final Uri SMS_DRAFT_CONTENT_URI = Uri.parse("content://sms/inbox");
 
+  private Cursor cursor;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.inbox);
 
-    Cursor cursor = getContentResolver().query(
+    cursor = getContentResolver().query(
         SMS_DRAFT_CONTENT_URI,
         new String[] {"_id", "date", "person", "address", "body"},
         null,
@@ -32,7 +34,6 @@ public class InboxActivity extends Activity {
     int[] to = new int[] {R.id.entry_date, R.id.entry_address, /*R.id.person_entry, */R.id.entry_body};
 
     SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(this, R.layout.sms_list_entry, cursor, columns, to);
-
     ListView listView = (ListView) findViewById(R.id.inbox_list);
     listView.setAdapter(listAdapter);
     /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -48,5 +49,13 @@ public class InboxActivity extends Activity {
         bodyView.setText(body);
       }
     });*/
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    if (cursor != null)
+      cursor.close();
   }
 }

@@ -2,7 +2,6 @@ package sofit.sms_worker;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -12,20 +11,18 @@ import android.widget.SimpleCursorAdapter;
  */
 public class QueueActivity extends Activity {
 
-  private final SmsWorkerOpenHelper smsWorkerOpenHelper = new SmsWorkerOpenHelper(this);
+  private final DatabaseHelper databaseHelper = ((MainApplication) getApplication()).getDbHelper();
+  private Cursor cursor;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.inbox);
 
-    SQLiteDatabase sqLiteDatabase = smsWorkerOpenHelper.getReadableDatabase();
-    Cursor cursor = sqLiteDatabase.query(SmsWorkerOpenHelper.TABLE_NAME, new String[] {
-        SmsWorkerOpenHelper._ID, SmsWorkerOpenHelper.SEND_DATE, SmsWorkerOpenHelper.RECIPIENT,
-        SmsWorkerOpenHelper.BODY}, null, null, null, null, SmsWorkerOpenHelper.SEND_DATE);
+    cursor = databaseHelper.getAllQueueElements();
 
     // the desired columns to be bound
-    String[] columns = new String[] {SmsWorkerOpenHelper.SEND_DATE, SmsWorkerOpenHelper.RECIPIENT, SmsWorkerOpenHelper.BODY};
+    String[] columns = new String[] {DatabaseHelper.SEND_DATETIME, DatabaseHelper.RECIPIENT, DatabaseHelper.BODY};
     // the XML defined views which the data will be bound to
     int[] to = new int[] {R.id.entry_date, R.id.entry_address, /*R.id.person_entry, */R.id.entry_body};
 
@@ -46,5 +43,13 @@ public class QueueActivity extends Activity {
         bodyView.setText(body);
       }
     });*/
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    if (cursor != null)
+      cursor.close();
   }
 }

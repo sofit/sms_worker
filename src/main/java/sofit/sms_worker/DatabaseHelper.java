@@ -40,35 +40,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     onCreate(db);
   }
 
-  public long addQueueElement(QueueElement queueElement) {
-    SQLiteDatabase sqLiteDatabase = null;
+  public void addQueueElement(QueueElement queueElement) {
+    SQLiteDatabase db = null;
 
     try {
-      sqLiteDatabase = getWritableDatabase();
+      db = getWritableDatabase();
       ContentValues contentValues = new ContentValues();
       contentValues.put(BODY, queueElement.getBody());
       contentValues.put(RECIPIENT, queueElement.getRecipient());
       contentValues.put(SEND_DATETIME, queueElement.getSendDatetime());
-      return sqLiteDatabase.insert(TABLE_NAME, null, contentValues);
+      queueElement.setId(db.insert(TABLE_NAME, null, contentValues));
     }
     finally {
-      if (sqLiteDatabase != null)
-        sqLiteDatabase.close();
+      if (db != null)
+        db.close();
     }
   }
 
   public Cursor getAllQueueElements() {
-    SQLiteDatabase sqLiteDatabase = null;
+    SQLiteDatabase db = null;
 
     try {
-      sqLiteDatabase = getReadableDatabase();
+      db = getReadableDatabase();
 
-      return sqLiteDatabase.query(TABLE_NAME, new String[] {_ID, SEND_DATETIME, RECIPIENT, BODY},
+      return db.query(TABLE_NAME, new String[] {_ID, SEND_DATETIME, RECIPIENT, BODY},
           null, null, null, null, DatabaseHelper.SEND_DATETIME);
     }
     finally {
-      if (sqLiteDatabase != null)
-        sqLiteDatabase.close();
+      if (db != null)
+        db.close();
+    }
+  }
+
+  public void delete(QueueElement queueElement) {
+    SQLiteDatabase db = null;
+
+    try {
+      db = getWritableDatabase();
+      db.delete(TABLE_NAME, _ID + " = ?", new String[] {String.valueOf(queueElement.getId())});
+    }
+    finally {
+      if (db != null)
+        db.close();
     }
   }
 }
