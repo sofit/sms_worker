@@ -1,4 +1,4 @@
-package sofit.sms_worker.activities;
+package sofit.sms_worker;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
