@@ -3,21 +3,18 @@ package sofit.sms_worker;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class SmsWorkerOpenHelper extends SQLiteOpenHelper {
 
+  private static final String TAG = "SmsWorkerOpenHelper";
   private static final String DATABASE_NAME = "sms_worker.sqlite";
   private static final int DATABASE_VERSION = 1;
   public static final String TABLE_NAME = "send_queue";
-  public static final String RECIPIENT_COLUMN = "recipient";
-  public static final String BODY_COLUMN = "body";
-  public static final String SEND_DATE_COLUMN = "send_date";
-
-  private static final String DICTIONARY_TABLE_CREATE =
-      "CREATE TABLE " + TABLE_NAME + " (" +
-          RECIPIENT_COLUMN + " TEXT, " +
-          BODY_COLUMN + " TEXT, " +
-          SEND_DATE_COLUMN + " DATETIME);";
+  public static final String _ID = "_id";
+  public static final String RECIPIENT = "recipient";
+  public static final String BODY = "body";
+  public static final String SEND_DATE = "send_date";
 
   public SmsWorkerOpenHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -25,11 +22,18 @@ public class SmsWorkerOpenHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-    db.execSQL(DICTIONARY_TABLE_CREATE);
+    Log.i(TAG, "creating db...");
+    db.execSQL("CREATE TABLE " + TABLE_NAME + " ( " +
+        _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        RECIPIENT + " TEXT, " +
+        BODY + " TEXT, " +
+        SEND_DATE + " DATETIME);");
   }
 
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    //TODO: implement this method
+    Log.d(TAG, "upgrade db from " + oldVersion + " to " + newVersion);
+    db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+    onCreate(db);
   }
 }

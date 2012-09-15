@@ -8,9 +8,9 @@ import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
@@ -23,19 +23,12 @@ import android.widget.*;
 public class MainActivity extends FragmentActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
   private static final String TAG = "MainActivity";
-  public static final Uri SMS_DRAFT_CONTENT_URI = Uri.parse("content://sms/draft");
   private final SmsWorkerOpenHelper smsWorkerOpenHelper = new SmsWorkerOpenHelper(this);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
-    Cursor cursor = getContentResolver().query(
-        SMS_DRAFT_CONTENT_URI,
-        new String[] {"_id", "date", "person", "address", "body"},
-        null,
-        null,
-        "date DESC");
 
     Cursor peopleCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PEOPLE_PROJECTION, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
     ContactListAdapter contactAdapter = new ContactListAdapter(this, peopleCursor);
@@ -43,36 +36,15 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
     addressView.setAdapter(contactAdapter);
     addressView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
-    startManagingCursor(cursor);
-    // the desired columns to be bound
-    String[] columns = new String[] {"date", /*"person", */"address", "body"};
-    // the XML defined views which the data will be bound to
-    int[] to = new int[] {R.id.entry_date, R.id.entry_address, /*R.id.person_entry, */R.id.entry_body};
-    SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(this, R.layout.sms_list_entry, cursor, columns, to);
-    ListView listView = (ListView) findViewById(R.id.listView);
-    listView.setAdapter(listAdapter);
-    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-      @Override
-      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Cursor data = (Cursor) adapterView.getItemAtPosition(i);
-        String address = data.getString(3);
-        String body = data.getString(4);
-        TextView addressView = (TextView) findViewById(R.id.address);
-        addressView.setText(address);
-        TextView bodyView = (TextView) findViewById(R.id.body);
-        bodyView.setText(body);
-      }
-    });
-
     final Calendar calendar = Calendar.getInstance();
+    calendar.add(Calendar.MINUTE, 5);
     String date = String.format("%1$td.%1$tm.%1$tY", calendar);
     String time = String.format("%1$tH:%1$tM", calendar);
     ((TextView) findViewById(R.id.date)).setText(date);
     ((TextView) findViewById(R.id.time)).setText(time);
   }
 
-  public void sendSms(View view) throws ParseException {
+  public void queueSms(View view) throws ParseException {
     TextView addressView = (TextView) findViewById(R.id.address);
     TextView bodyView = (TextView) findViewById(R.id.body);
     TextView dateView = (TextView) findViewById(R.id.date);
@@ -80,13 +52,13 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
 
     String address = addressView.getText().toString();
     String body = bodyView.getText().toString();
-    String sendDate = dateView.getText().toString() + timeView.getText().toString();
+    String sendDate = dateView.getText().toString() + " " + timeView.getText().toString();
 
     SQLiteDatabase sqLiteDatabase = smsWorkerOpenHelper.getWritableDatabase();
     ContentValues contentValues = new ContentValues();
-    contentValues.put(SmsWorkerOpenHelper.BODY_COLUMN, body);
-    contentValues.put(SmsWorkerOpenHelper.RECIPIENT_COLUMN, address);
-    contentValues.put(SmsWorkerOpenHelper.SEND_DATE_COLUMN, sendDate);
+    contentValues.put(SmsWorkerOpenHelper.BODY, body);
+    contentValues.put(SmsWorkerOpenHelper.RECIPIENT, address);
+    contentValues.put(SmsWorkerOpenHelper.SEND_DATE, sendDate);
     sqLiteDatabase.insert(SmsWorkerOpenHelper.TABLE_NAME, null, contentValues);
     /*
     Timer timer = new Timer();
@@ -237,5 +209,15 @@ public class MainActivity extends FragmentActivity implements TimePickerDialog.O
   public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
     String time = String.format("%02d:%02d", hourOfDay, minute);
     ((TextView) findViewById(R.id.time)).setText(time);
+  }
+
+  public void showInboxList(View view) {
+    Intent intent = new Intent(this, InboxActivity.class);
+    startActivity(intent);
+  }
+
+  public void showQueueList(View view) {
+    Intent intent = new Intent(this, QueueActivity.class);
+    startActivity(intent);
   }
 }
