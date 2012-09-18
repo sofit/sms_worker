@@ -1,10 +1,13 @@
 package sofit.sms_worker;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ListView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
 
 /**
@@ -14,28 +17,11 @@ public class InboxActivity extends Activity {
 
   public static final Uri SMS_DRAFT_CONTENT_URI = Uri.parse("content://sms/inbox");
 
-  private Cursor cursor;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.inbox);
+//    setContentView(R.layout.inbox);
 
-    cursor = getContentResolver().query(
-        SMS_DRAFT_CONTENT_URI,
-        new String[] {"_id", "date", "person", "address", "body"},
-        null,
-        null,
-        "date DESC");
-
-    // the desired columns to be bound
-    String[] columns = new String[] {"date", /*"person", */"address", "body"};
-    // the XML defined views which the data will be bound to
-    int[] to = new int[] {R.id.entry_date, R.id.entry_address, /*R.id.person_entry, */R.id.entry_body};
-
-    SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(this, R.layout.sms_list_entry, cursor, columns, to);
-    ListView listView = (ListView) findViewById(R.id.inbox_list);
-    listView.setAdapter(listAdapter);
     /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
       @Override
@@ -51,11 +37,40 @@ public class InboxActivity extends Activity {
     });*/
   }
 
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
+  public static class InboxFragment extends ListFragment {
+    private Cursor cursor;
 
-    if (cursor != null)
-      cursor.close();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+      super.onCreate(savedInstanceState);
+
+      cursor = getActivity().getContentResolver().query(
+          SMS_DRAFT_CONTENT_URI,
+          new String[] {"_id", "date", "person", "address", "body"},
+          null,
+          null,
+          "date DESC");
+
+      // the desired columns to be bound
+      String[] columns = new String[] {"date", /*"person", */"address", "body"};
+      // the XML defined views which the data will be bound to
+      int[] to = new int[] {R.id.entry_date, R.id.entry_address, /*R.id.person_entry, */R.id.entry_body};
+
+      SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(getActivity(), R.layout.sms_list_entry, cursor, columns, to);
+      setListAdapter(listAdapter);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      return inflater.inflate(R.layout.inbox, container, false);
+    }
+
+    @Override
+    public void onDestroy() {
+      super.onDestroy();
+
+      if (cursor != null)
+        cursor.close();
+    }
   }
 }
