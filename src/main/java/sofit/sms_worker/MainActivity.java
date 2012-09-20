@@ -16,16 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
-  private static final String TAG = "MainActivity";
+  private DatabaseHelper dbHelper;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    Intent intent = new Intent(this, QueueService.class);
-    startService(intent);
+    dbHelper = ((MainApplication) getApplication()).getDbHelper();
 
     // setup action bar for tabs
     final ActionBar actionBar = getActionBar();
@@ -33,22 +32,128 @@ public class MainActivity extends Activity {
     actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
     ActionBar.Tab tab1 = actionBar.newTab()
-        .setText("Main")
+        .setText(R.string.main_tab)
         .setTabListener(new TabListener<MainActivity.MainFragment>(
             this, "main_tab", MainActivity.MainFragment.class));
     actionBar.addTab(tab1);
 
     ActionBar.Tab tab2 = actionBar.newTab()
-        .setText("Inbox")
+        .setText(R.string.inbox_tab)
         .setTabListener(new TabListener<InboxActivity.InboxFragment>(
             this, "inbox_tab", InboxActivity.InboxFragment.class));
     actionBar.addTab(tab2);
 
     ActionBar.Tab tab3 = actionBar.newTab()
-        .setText("Queue")
+        .setText(R.string.queue_tab)
         .setTabListener(new TabListener<QueueActivity.QueueFragment>(
             this, "queue_tab", QueueActivity.QueueFragment.class));
     actionBar.addTab(tab3);
+  }
+
+  public void clearQueue(View view) {
+    List<QueueElement> queueElementList = dbHelper.getAllQueueElements();
+    for (QueueElement queueElement : queueElementList)
+      dbHelper.delete(queueElement);
+    Toast.makeText(this, "Queue cleared", Toast.LENGTH_SHORT).show();
+  }
+
+  public void queueSms(View view) throws ParseException {
+    TextView addressView = (TextView) findViewById(R.id.address);
+    TextView bodyView = (TextView) findViewById(R.id.body);
+    TextView dateView = (TextView) findViewById(R.id.date);
+    TextView timeView = (TextView) findViewById(R.id.time);
+
+    String address = addressView.getText().toString();
+    String body = bodyView.getText().toString();
+    String sendDate = dateView.getText().toString() + " " + timeView.getText().toString();
+
+    QueueElement queueElement = new QueueElement(address, body, sendDate);
+    dbHelper.addQueueElement(queueElement);
+    Toast.makeText(this, "Sms added to queue", Toast.LENGTH_SHORT).show();
+  }
+
+  public void onToggleClicked(View view) {
+    boolean on = ((ToggleButton) view).isChecked();
+
+    if (on) {
+      Intent intent = new Intent(this, QueueService.class);
+      startService(intent);
+    }
+    else {
+      Intent intent = new Intent(this, QueueService.class);
+      stopService(intent);
+    }
+  }
+
+  public void showDatePickerDialog(View view) {
+    String dateStr = String.valueOf(((TextView) findViewById(R.id.date)).getText());
+    int year = 0, month = 0, day = 0;
+
+    if (dateStr.isEmpty()) {
+      Calendar calendar = Calendar.getInstance();
+      year = calendar.get(Calendar.YEAR);
+      month = calendar.get(Calendar.MONTH);
+      day = calendar.get(Calendar.DAY_OF_MONTH);
+    }
+    else {
+      int i = 1;
+      for (String str : dateStr.split("\\.")) {
+        switch (i) {
+          case 1:
+            day = Integer.valueOf(str);
+            break;
+          case 2:
+            month = Integer.valueOf(str);
+            break;
+          case 3:
+            year = Integer.valueOf(str);
+            break;
+        }
+        i++;
+      }
+    }
+
+    DialogFragment sendDatePickerDialog = new SendDatePickerDialog(this, year, month, day);
+    sendDatePickerDialog.show(getFragmentManager(), "datePicker");
+  }
+
+  public void showTimePickerDialog(View view) {
+    String dateStr = String.valueOf(((TextView) findViewById(R.id.time)).getText());
+    int hour = 0, minute = 0;
+
+    if (dateStr.isEmpty()) {
+      Calendar calendar = Calendar.getInstance();
+      hour = calendar.get(Calendar.HOUR);
+      minute = calendar.get(Calendar.MINUTE);
+    }
+    else {
+      int i = 1;
+      for (String str : dateStr.split(":")) {
+        switch (i) {
+          case 1:
+            hour = Integer.valueOf(str);
+            break;
+          case 2:
+            minute = Integer.valueOf(str);
+            break;
+        }
+        i++;
+      }
+    }
+    DialogFragment sendTimePickerDialog = new SendTimePickerDialog(this, hour, minute);
+    sendTimePickerDialog.show(getFragmentManager(), "timePicker");
+  }
+
+  @Override
+  public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+    String date = String.format("%02d.%02d.%04d", dayOfMonth, monthOfYear, year);
+    ((TextView) findViewById(R.id.date)).setText(date);
+  }
+
+  @Override
+  public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+    String time = String.format("%02d:%02d", hourOfDay, minute);
+    ((TextView) findViewById(R.id.time)).setText(time);
   }
 
   public static class ContactListAdapter extends CursorAdapter implements Filterable {
@@ -162,17 +267,9 @@ public class MainActivity extends Activity {
     }
   }
 
-  public static class MainFragment extends Fragment implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+  public static class MainFragment extends Fragment {
 
     private Cursor peopleCursor;
-    private DatabaseHelper dbHelper;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-      super.onCreate(savedInstanceState);
-
-      dbHelper = ((MainApplication) getActivity().getApplication()).getDbHelper();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -203,110 +300,6 @@ public class MainActivity extends Activity {
 
       if (peopleCursor != null)
         peopleCursor.close();
-    }
-
-    public void queueSms(View view) throws ParseException {
-      TextView addressView = (TextView) getActivity().findViewById(R.id.address);
-      TextView bodyView = (TextView) getActivity().findViewById(R.id.body);
-      TextView dateView = (TextView) getActivity().findViewById(R.id.date);
-      TextView timeView = (TextView) getActivity().findViewById(R.id.time);
-
-      String address = addressView.getText().toString();
-      String body = bodyView.getText().toString();
-      String sendDate = dateView.getText().toString() + " " + timeView.getText().toString();
-
-      QueueElement queueElement = new QueueElement(address, body, sendDate);
-      dbHelper.addQueueElement(queueElement);
-    }
-
-    public void onToggleClicked(View view) {
-      boolean on = ((ToggleButton) view).isChecked();
-
-      if (on) {
-        Intent intent = new Intent(getActivity(), QueueService.class);
-        getActivity().startService(intent);
-      }
-      else {
-        Intent intent = new Intent(getActivity(), QueueService.class);
-        getActivity().stopService(intent);
-      }
-    }
-
-    public void showDatePickerDialog(View view) {
-      String dateStr = String.valueOf(((TextView) getActivity().findViewById(R.id.date)).getText());
-      int year = 0, month = 0, day = 0;
-
-      if (dateStr.isEmpty()) {
-        Calendar calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
-      }
-      else {
-        int i = 1;
-        for (String str : dateStr.split("\\.")) {
-          switch (i) {
-            case 1:
-              day = Integer.valueOf(str);
-              break;
-            case 2:
-              month = Integer.valueOf(str);
-              break;
-            case 3:
-              year = Integer.valueOf(str);
-              break;
-          }
-          i++;
-        }
-      }
-
-      DialogFragment sendDatePickerDialog = new SendDatePickerDialog(this, year, month, day);
-      sendDatePickerDialog.show(getFragmentManager(), "datePicker");
-    }
-
-    public void showTimePickerDialog(View view) {
-      String dateStr = String.valueOf(((TextView) getActivity().findViewById(R.id.time)).getText());
-      int hour = 0, minute = 0;
-
-      if (dateStr.isEmpty()) {
-        Calendar calendar = Calendar.getInstance();
-        hour = calendar.get(Calendar.HOUR);
-        minute = calendar.get(Calendar.MINUTE);
-      }
-      else {
-        int i = 1;
-        for (String str : dateStr.split(":")) {
-          switch (i) {
-            case 1:
-              hour = Integer.valueOf(str);
-              break;
-            case 2:
-              minute = Integer.valueOf(str);
-              break;
-          }
-          i++;
-        }
-      }
-      DialogFragment sendTimePickerDialog = new SendTimePickerDialog(this, hour, minute);
-      sendTimePickerDialog.show(getFragmentManager(), "timePicker");
-    }
-
-    public void clearQueue(View view) {
-      List<QueueElement> queueElementList = dbHelper.getAllQueueElements();
-      for (QueueElement queueElement : queueElementList)
-        dbHelper.delete(queueElement);
-    }
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-      String date = String.format("%02d.%02d.%04d", dayOfMonth, monthOfYear, year);
-      ((TextView) getActivity().findViewById(R.id.date)).setText(date);
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-      String time = String.format("%02d:%02d", hourOfDay, minute);
-      ((TextView) getActivity().findViewById(R.id.time)).setText(time);
     }
   }
 }

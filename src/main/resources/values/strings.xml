@@ -12,4 +12,9 @@
   <string name="send_date">Отправить в </string>
   <string name="entry_number">Номер</string>
   <string name="queue_sms">Добавить в очередь</string>
+  <string name="main_tab">SMS</string>
+  <string name="inbox_tab">Входящие</string>
+  <string name="queue_tab">Очередь</string>
+  <string name="service_toggle_on">Выключить обработку</string>
+  <string name="service_toggle_off">Включить обработку</string>
 </resources>
