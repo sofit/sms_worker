@@ -47,12 +47,6 @@
   <LinearLayout android:orientation="horizontal"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
-    <ImageButton
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:contentDescription="Send sms to queue"
-        android:src="@drawable/queue"
-        android:onClick="queueSms"/>
     <ToggleButton
         android:id="@+id/sms_process"
         android:checked="false"
@@ -61,14 +55,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onToggleClicked"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear queue"
-        android:onClick="clearQueue"/>
   </LinearLayout>
-  <TextView
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"
-      android:text="@string/sms_list"/>
 </LinearLayout>

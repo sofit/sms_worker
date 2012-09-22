@@ -11,14 +11,39 @@ import android.database.Cursor;
 import android.net.ParseException;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.*;
 
 public class MainActivity extends Activity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
   private DatabaseHelper dbHelper;
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.main, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        // app icon in action bar clicked; go home
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        return true;
+      case R.id.main_queue:
+        queueSms();
+        return true;
+      case R.id.main_clear:
+        clearQueue();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
+    }
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +75,14 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
     actionBar.addTab(tab3);
   }
 
-  public void clearQueue(View view) {
+  public void clearQueue() {
     List<QueueElement> queueElementList = dbHelper.getAllQueueElements();
     for (QueueElement queueElement : queueElementList)
       dbHelper.delete(queueElement);
     Toast.makeText(this, "Queue cleared", Toast.LENGTH_SHORT).show();
   }
 
-  public void queueSms(View view) throws ParseException {
+  public void queueSms() throws ParseException {
     TextView addressView = (TextView) findViewById(R.id.address);
     TextView bodyView = (TextView) findViewById(R.id.body);
     TextView dateView = (TextView) findViewById(R.id.date);
@@ -292,6 +317,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
       String time = String.format("%1$tH:%1$tM", calendar);
       ((TextView) getActivity().findViewById(R.id.date)).setText(date);
       ((TextView) getActivity().findViewById(R.id.time)).setText(time);
+      ((ToggleButton) getActivity().findViewById(R.id.sms_process)).setChecked(isQueueServiceRunning());
     }
 
     @Override
@@ -300,6 +326,15 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
 
       if (peopleCursor != null)
         peopleCursor.close();
+    }
+
+    private boolean isQueueServiceRunning() {
+      ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+      for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+        if (QueueService.class.getName().equals(service.service.getClassName()))
+          return true;
+      }
+      return false;
     }
   }
 }

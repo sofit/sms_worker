@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/main_queue"
+        android:icon="@drawable/content_save"
+        android:title="@string/main_queue"
+        android:showAsAction="always|withText" />
+  <item android:id="@+id/main_clear"
+        android:icon="@drawable/content_discard"
+        android:title="@string/main_clear"
+        android:showAsAction="always|withText" />
+</menu>

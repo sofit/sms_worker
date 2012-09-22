@@ -17,4 +17,6 @@
   <string name="queue_tab">Очередь</string>
   <string name="service_toggle_on">Выключить обработку</string>
   <string name="service_toggle_off">Включить обработку</string>
+  <string name="main_queue">Запланировать</string>
+  <string name="main_clear">Очистить</string>
 </resources>
