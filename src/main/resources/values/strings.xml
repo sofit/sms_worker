@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Отложенная отправка SMS</string>
-  <string name="sms_list">Список SMS:</string>
   <string name="recipient_hint">Кому</string>
   <string name="body_hint">Сообщение</string>
   <string name="date_hint">Дата</string>
@@ -17,6 +16,7 @@
   <string name="queue_tab">Очередь</string>
   <string name="service_toggle_on">Выключить обработку</string>
   <string name="service_toggle_off">Включить обработку</string>
-  <string name="main_queue">Запланировать</string>
+  <string name="main_create">Создать</string>
   <string name="main_clear">Очистить</string>
+  <string name="save_button">Запланировать</string>
 </resources>

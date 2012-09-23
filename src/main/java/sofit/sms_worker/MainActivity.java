@@ -34,8 +34,10 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         return true;
-      case R.id.main_queue:
-        queueSms();
+      case R.id.main_create:
+        ActionBar actionBar = getActionBar();
+        if (actionBar.getSelectedNavigationIndex() > 0)
+          actionBar.setSelectedNavigationItem(0);
         return true;
       case R.id.main_clear:
         clearQueue();
@@ -82,7 +84,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
     Toast.makeText(this, "Queue cleared", Toast.LENGTH_SHORT).show();
   }
 
-  public void queueSms() throws ParseException {
+  public void queueSms(View view) {
     TextView addressView = (TextView) findViewById(R.id.address);
     TextView bodyView = (TextView) findViewById(R.id.body);
     TextView dateView = (TextView) findViewById(R.id.date);

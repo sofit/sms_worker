@@ -12,19 +12,20 @@
       android:hint="@string/recipient_hint"/>
   <EditText
       android:id="@+id/body"
-      android:layout_height="wrap_content"
       android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
       android:inputType="textLongMessage|textMultiLine|textAutoCorrect|textAutoComplete"
       android:minLines="5"
       android:hint="@string/body_hint"/>
-  <LinearLayout android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center">
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/send_date"
-        />
+        android:text="@string/send_date"/>
     <EditText
         android:id="@+id/time"
         android:layout_height="wrap_content"
@@ -44,9 +45,29 @@
         android:hint="@string/date_hint"
         android:onClick="showDatePickerDialog"/>
   </LinearLayout>
-  <LinearLayout android:orientation="horizontal"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
+  <View
+      android:layout_height="15dp"
+      android:layout_width="fill_parent"/>
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center">
+
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/save_button"
+        android:onClick="queueSms"/>
+  </LinearLayout>
+  <View
+      android:layout_height="30dp"
+      android:layout_width="fill_parent"/>
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center">
     <ToggleButton
         android:id="@+id/sms_process"
         android:checked="false"
