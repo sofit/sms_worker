@@ -19,4 +19,13 @@
   <string name="main_create">Создать</string>
   <string name="main_clear">Очистить</string>
   <string name="save_button">Запланировать</string>
+  <string name="added_to_queue">Сообщение добавлено в очередь</string>
+  <string name="queue_cleared">Очередь очищена</string>
+  <string name="alert_dialog_ok">Да</string>
+  <string name="alert_dialog_cancel">Отмена</string>
+  <string name="clear_queue_dialog_title">Очистка очереди</string>
+  <string name="clear_queue_dialog_message">Вы действительно хотите очистить очередь сообщений?</string>
+  <string name="queue_service_started">Сервис обработки очереди запущен</string>
+  <string name="queue_service_stopped">Сервис обработки очереди остановлен</string>
+
 </resources>

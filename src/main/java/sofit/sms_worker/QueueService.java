@@ -17,7 +17,6 @@ import android.util.Log;
 public class QueueService extends Service {
 
   private DatabaseHelper dbHelper;
-  private static final String TAG = "QueueService";
   private final SmsManager smsManager = SmsManager.getDefault();
   private static long UPDATE_INTERVAL = 5 * 60 * 1000;
   private static Timer timer;

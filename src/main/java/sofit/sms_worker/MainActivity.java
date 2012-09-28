@@ -6,9 +6,9 @@ import java.util.List;
 import android.app.*;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ParseException;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.*;
@@ -22,6 +22,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main, menu);
+    menu.findItem(R.id.main_queue_service).setChecked(isQueueServiceRunning());
     return true;
   }
 
@@ -29,18 +30,24 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
-        // app icon in action bar clicked; go home
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        return true;
       case R.id.main_create:
         ActionBar actionBar = getActionBar();
         if (actionBar.getSelectedNavigationIndex() > 0)
           actionBar.setSelectedNavigationItem(0);
         return true;
       case R.id.main_clear:
-        clearQueue();
+        showClearQueueDialog();
+        return true;
+      case R.id.main_queue_service:
+        item.setTitle(item.isChecked() ? R.string.service_toggle_off : R.string.service_toggle_on);
+        item.setIcon(item.isChecked() ? R.drawable.content_save : R.drawable.content_discard);
+        item.setChecked(!item.isChecked());
+        Intent intent = new Intent(this, QueueService.class);
+        if (item.isChecked())
+          stopService(intent);
+        else
+          startService(intent);
+        Toast.makeText(this, item.isChecked() ? R.string.queue_service_started : R.string.queue_service_stopped, Toast.LENGTH_SHORT).show();
         return true;
       default:
         return super.onOptionsItemSelected(item);
@@ -77,11 +84,36 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
     actionBar.addTab(tab3);
   }
 
-  public void clearQueue() {
+  public void showClearQueueDialog() {
+    AlertDialog alertDialog = new AlertDialog.Builder(this)
+        .setTitle(R.string.clear_queue_dialog_title)
+        .setMessage(R.string.clear_queue_dialog_message)
+        .setPositiveButton(R.string.alert_dialog_ok,
+            new DialogInterface.OnClickListener() {
+              public void onClick(DialogInterface dialog, int whichButton) {
+                clearQueue();
+              }
+            }
+        )
+        .setNegativeButton(R.string.alert_dialog_cancel, null)
+        .create();
+    alertDialog.show();
+  }
+
+  private boolean isQueueServiceRunning() {
+    ActivityManager manager = (ActivityManager)  getSystemService(Context.ACTIVITY_SERVICE);
+    for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+      if (QueueService.class.getName().equals(service.service.getClassName()))
+        return true;
+    }
+    return false;
+  }
+
+  private void clearQueue() {
     List<QueueElement> queueElementList = dbHelper.getAllQueueElements();
     for (QueueElement queueElement : queueElementList)
       dbHelper.delete(queueElement);
-    Toast.makeText(this, "Queue cleared", Toast.LENGTH_SHORT).show();
+    Toast.makeText(this, R.string.queue_cleared, Toast.LENGTH_SHORT).show();
   }
 
   public void queueSms(View view) {
@@ -96,20 +128,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
 
     QueueElement queueElement = new QueueElement(address, body, sendDate);
     dbHelper.addQueueElement(queueElement);
-    Toast.makeText(this, "Sms added to queue", Toast.LENGTH_SHORT).show();
-  }
-
-  public void onToggleClicked(View view) {
-    boolean on = ((ToggleButton) view).isChecked();
-
-    if (on) {
-      Intent intent = new Intent(this, QueueService.class);
-      startService(intent);
-    }
-    else {
-      Intent intent = new Intent(this, QueueService.class);
-      stopService(intent);
-    }
+    Toast.makeText(this, R.string.added_to_queue, Toast.LENGTH_SHORT).show();
   }
 
   public void showDatePickerDialog(View view) {
@@ -319,7 +338,6 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
       String time = String.format("%1$tH:%1$tM", calendar);
       ((TextView) getActivity().findViewById(R.id.date)).setText(date);
       ((TextView) getActivity().findViewById(R.id.time)).setText(time);
-      ((ToggleButton) getActivity().findViewById(R.id.sms_process)).setChecked(isQueueServiceRunning());
     }
 
     @Override
@@ -328,15 +346,6 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
 
       if (peopleCursor != null)
         peopleCursor.close();
-    }
-
-    private boolean isQueueServiceRunning() {
-      ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-      for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-        if (QueueService.class.getName().equals(service.service.getClassName()))
-          return true;
-      }
-      return false;
     }
   }
 }

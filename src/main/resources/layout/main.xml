@@ -68,13 +68,5 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:gravity="center">
-    <ToggleButton
-        android:id="@+id/sms_process"
-        android:checked="false"
-        android:textOn="@string/service_toggle_on"
-        android:textOff="@string/service_toggle_off"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onToggleClicked"/>
   </LinearLayout>
 </LinearLayout>
