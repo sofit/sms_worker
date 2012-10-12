@@ -53,20 +53,12 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:gravity="center">
-
     <Button
+        android:id="@+id/queue_button"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/save_button"
-        android:onClick="queueSms"/>
-  </LinearLayout>
-  <View
-      android:layout_height="30dp"
-      android:layout_width="fill_parent"/>
-  <LinearLayout
-      android:orientation="horizontal"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:gravity="center">
+        android:onClick="queueSms"
+        android:enabled="false"/>
   </LinearLayout>
 </LinearLayout>

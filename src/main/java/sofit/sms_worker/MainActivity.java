@@ -9,8 +9,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Address;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 
@@ -101,7 +104,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
   }
 
   private boolean isQueueServiceRunning() {
-    ActivityManager manager = (ActivityManager)  getSystemService(Context.ACTIVITY_SERVICE);
+    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
       if (QueueService.class.getName().equals(service.service.getClassName()))
         return true;
@@ -315,11 +318,27 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
 
   public static class MainFragment extends Fragment {
 
+    private enum WatcherType {ADDRESS, BODY}
+
     private Cursor peopleCursor;
+    private boolean addressFilled = false;
+    private boolean bodyFilled = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
       return inflater.inflate(R.layout.main, container, false);
+    }
+
+    public void setQueueEnabled(WatcherType type, boolean empty) {
+      switch (type) {
+        case ADDRESS:
+          addressFilled = !empty;
+          break;
+        case BODY:
+          bodyFilled = !empty;
+          break;
+      }
+      getActivity().findViewById(R.id.queue_button).setEnabled(addressFilled && bodyFilled);
     }
 
     @Override
@@ -338,6 +357,36 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
       String time = String.format("%1$tH:%1$tM", calendar);
       ((TextView) getActivity().findViewById(R.id.date)).setText(date);
       ((TextView) getActivity().findViewById(R.id.time)).setText(time);
+
+      ((TextView) getActivity().findViewById(R.id.address)).addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+          setQueueEnabled(WatcherType.ADDRESS, charSequence.length() == 0);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+        }
+      });
+      ((TextView) getActivity().findViewById(R.id.body)).addTextChangedListener(new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+          setQueueEnabled(WatcherType.BODY, charSequence.length() == 0);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+        }
+      });
+
     }
 
     @Override
