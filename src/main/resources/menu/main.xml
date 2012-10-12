@@ -10,7 +10,7 @@
         android:title="@string/main_clear"
         android:showAsAction="always|withText"/>
   <item android:id="@+id/main_queue_service"
-        android:icon="@drawable/content_save"
+        android:icon="@drawable/av_play"
         android:title="@string/service_toggle_off"
         android:showAsAction="always|withText"
         android:checkable="true"

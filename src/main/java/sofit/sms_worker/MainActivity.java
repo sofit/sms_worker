@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
         return true;
       case R.id.main_queue_service:
         item.setTitle(item.isChecked() ? R.string.service_toggle_off : R.string.service_toggle_on);
-        item.setIcon(item.isChecked() ? R.drawable.content_save : R.drawable.content_discard);
+        item.setIcon(item.isChecked() ? R.drawable.av_play : R.drawable.av_stop);
         item.setChecked(!item.isChecked());
         Intent intent = new Intent(this, QueueService.class);
         if (item.isChecked())

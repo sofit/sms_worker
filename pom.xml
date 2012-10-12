@@ -35,10 +35,23 @@
           <!--<assetsDirectory>${project.basedir}/assets</assetsDirectory>-->
           <!--<nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>-->
           <sdk>
-            <platform>15</platform>
+            <platform>16</platform>
           </sdk>
           <undeployBeforeDeploy>true</undeployBeforeDeploy>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>manifest-update</goal>
+            </goals>
+            <configuration>
+              <manifest>
+                <!--<versionCodeAutoIncrement>true</versionCodeAutoIncrement>-->
+                <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+              </manifest>
+            </configuration>
+          </execution>
+        </executions>
         <extensions>true</extensions>
       </plugin>
     </plugins>
@@ -48,6 +61,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
-    <platform.version>4.0.1.2</platform.version>
+    <platform.version>4.1.1.4</platform.version>
   </properties>
 </project>
