@@ -5,7 +5,10 @@ import android.app.ListFragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.SimpleCursorAdapter;
 
 /**
@@ -54,7 +57,7 @@ public class InboxActivity extends Activity {
       // the XML defined views which the data will be bound to
       int[] to = new int[] {R.id.entry_date, R.id.entry_address, /*R.id.person_entry, */R.id.entry_body};
 
-      SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(getActivity(), R.layout.sms_list_entry, cursor, columns, to);
+      SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(getActivity(), R.layout.sms_list_entry, cursor, columns, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
       setListAdapter(listAdapter);
     }
 

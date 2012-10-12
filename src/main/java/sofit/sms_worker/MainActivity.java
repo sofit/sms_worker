@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Address;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.Editable;
@@ -26,6 +25,8 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.main, menu);
     menu.findItem(R.id.main_queue_service).setChecked(isQueueServiceRunning());
+    DatabaseHelper dbHelper = ((MainApplication) getApplication()).getDbHelper();
+    menu.findItem(R.id.main_clear).setEnabled(dbHelper.getQueueElementsCount() > 0);
     return true;
   }
 
@@ -116,6 +117,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
     List<QueueElement> queueElementList = dbHelper.getAllQueueElements();
     for (QueueElement queueElement : queueElementList)
       dbHelper.delete(queueElement);
+    findViewById(R.id.main_clear).setEnabled(false);
     Toast.makeText(this, R.string.queue_cleared, Toast.LENGTH_SHORT).show();
   }
 
@@ -131,6 +133,7 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
 
     QueueElement queueElement = new QueueElement(address, body, sendDate);
     dbHelper.addQueueElement(queueElement);
+    findViewById(R.id.main_clear).setEnabled(true);
     Toast.makeText(this, R.string.added_to_queue, Toast.LENGTH_SHORT).show();
   }
 
@@ -386,7 +389,6 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
         public void afterTextChanged(Editable editable) {
         }
       });
-
     }
 
     @Override

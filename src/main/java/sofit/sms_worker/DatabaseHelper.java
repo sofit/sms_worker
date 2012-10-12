@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -92,5 +93,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
   public void delete(QueueElement queueElement) {
     SQLiteDatabase db = getWritableDatabase();
     db.delete(TABLE_NAME, _ID + " = ?", new String[] {String.valueOf(queueElement.getId())});
+  }
+
+  public long getQueueElementsCount() {
+    SQLiteDatabase db = getReadableDatabase();
+    SQLiteStatement statement = db.compileStatement("SELECT COUNT(_id) FROM " + TABLE_NAME);
+    return statement.simpleQueryForLong();
   }
 }
