@@ -6,7 +6,7 @@
         android:title="@string/main_create"
         android:showAsAction="always|withText"/>
   <item android:id="@+id/main_clear"
-        android:icon="@drawable/content_discard"
+        android:icon="@drawable/clear_queue"
         android:title="@string/main_clear"
         android:showAsAction="always|withText"/>
   <item android:id="@+id/main_queue_service"
