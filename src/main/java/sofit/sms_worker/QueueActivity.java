@@ -57,7 +57,6 @@ public class QueueActivity extends Activity {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-      cursor.requery();
       return inflater.inflate(R.layout.queue, container, false);
     }
 

@@ -46,7 +46,6 @@
             </goals>
             <configuration>
               <manifest>
-                <!--<versionCodeAutoIncrement>true</versionCodeAutoIncrement>-->
                 <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
               </manifest>
             </configuration>

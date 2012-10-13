@@ -133,6 +133,8 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
 
     QueueElement queueElement = new QueueElement(address, body, sendDate);
     dbHelper.addQueueElement(queueElement);
+    addressView.setText("");
+    bodyView.setText("");
     findViewById(R.id.main_clear).setEnabled(true);
     Toast.makeText(this, R.string.added_to_queue, Toast.LENGTH_SHORT).show();
   }
@@ -213,9 +215,8 @@ public class MainActivity extends Activity implements TimePickerDialog.OnTimeSet
     private ContentResolver content;
     private final LayoutInflater inflater;
 
-
     public ContactListAdapter(Context context, Cursor c) {
-      super(context, c);
+      super(context, c, FLAG_REGISTER_CONTENT_OBSERVER);
       content = context.getContentResolver();
       inflater = LayoutInflater.from(context);
     }
